@@ -1,7 +1,9 @@
 
-var ASMAPI = Java.type("net.minecraftforge.coremod.api.ASMAPI");
 var Opcodes = Java.type("org.objectweb.asm.Opcodes");
-var MethodInsnNode = Java.type("org.objectweb.asm.tree.MethodInsnNode");
+var InsnList = Java.type("org.objectweb.asm.tree.InsnList");
+var InsnNode = Java.type("org.objectweb.asm.tree.InsnNode");
+var JumpInsnNode = Java.type("org.objectweb.asm.tree.JumpInsnNode");
+var LabelNode = Java.type("org.objectweb.asm.tree.LabelNode");
 var VarInsnNode = Java.type("org.objectweb.asm.tree.VarInsnNode");
 
 function initializeCoreMod() {
@@ -17,9 +19,15 @@ function initializeCoreMod() {
                 var insnList = mn.instructions.toArray();
                 for (var i = 0; i < insnList.length; i++) {
                     var node = insnList[i];
-                    if (node.getOpcode() === Opcodes.INVOKEVIRTUAL && node.owner.equals("net/minecraft/client/renderer/entity/EntityRendererManager") && node.name.equals(ASMAPI.mapMethod("func_78713_a")) && node.desc.equals("(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/renderer/entity/EntityRenderer;")) {
-                        mn.instructions.insert(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "io/github/zekerzhayard/npe_entityrenderermanager/NPE_EntityRendererManager", "check", "(Lnet/minecraft/client/renderer/entity/EntityRenderer;Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/renderer/entity/EntityRenderer;", false));
-                        mn.instructions.insert(node, new VarInsnNode(Opcodes.ALOAD, 1));
+                    if (node.getOpcode() === Opcodes.ASTORE) {
+                        var il = new InsnList();
+                        var ln = new LabelNode();
+                        il.add(new VarInsnNode(Opcodes.ALOAD, node.var));
+                        il.add(new JumpInsnNode(Opcodes.IFNONNULL, ln));
+                        il.add(new InsnNode(Opcodes.ICONST_0));
+                        il.add(new InsnNode(Opcodes.IRETURN));
+                        il.add(ln)
+                        mn.instructions.insert(node, il);
                     }
                 }
                 return mn;
