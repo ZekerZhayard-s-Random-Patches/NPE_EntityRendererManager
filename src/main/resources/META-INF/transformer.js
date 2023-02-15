@@ -10,7 +10,7 @@ function initializeCoreMod() {
             "target": {
                 "type": "METHOD",
                 "class": "net/minecraft/client/renderer/entity/EntityRendererManager",
-                "methodName": "func_225626_a_",
+                "methodName": "func_229086_a_",
                 "methodDesc": "(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ClippingHelper;DDD)Z"
             },
             "transformer": function (mn) {
