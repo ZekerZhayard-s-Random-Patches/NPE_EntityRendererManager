@@ -1,33 +1,21 @@
 
 var Opcodes = Java.type("org.objectweb.asm.Opcodes");
-var InsnList = Java.type("org.objectweb.asm.tree.InsnList");
-var InsnNode = Java.type("org.objectweb.asm.tree.InsnNode");
-var JumpInsnNode = Java.type("org.objectweb.asm.tree.JumpInsnNode");
-var LabelNode = Java.type("org.objectweb.asm.tree.LabelNode");
-var VarInsnNode = Java.type("org.objectweb.asm.tree.VarInsnNode");
+var MethodInsnNode = Java.type("org.objectweb.asm.tree.MethodInsnNode");
 
 function initializeCoreMod() {
     return {
-        "EntityRendererManager_shouldRender": {
+        "EntityRendererManager_getRenderer": {
             "target": {
                 "type": "METHOD",
                 "class": "net/minecraft/client/renderer/entity/EntityRendererManager",
-                "methodName": "func_229086_a_",
-                "methodDesc": "(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ClippingHelper;DDD)Z"
+                "methodName": "func_78713_a",
+                "methodDesc": "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/renderer/entity/EntityRenderer;"
             },
             "transformer": function (mn) {
-                var insnList = mn.instructions.toArray();
-                for (var i = 0; i < insnList.length; i++) {
-                    var node = insnList[i];
-                    if (node.getOpcode() === Opcodes.ASTORE) {
-                        var il = new InsnList();
-                        var ln = new LabelNode();
-                        il.add(new VarInsnNode(Opcodes.ALOAD, node.var));
-                        il.add(new JumpInsnNode(Opcodes.IFNONNULL, ln));
-                        il.add(new InsnNode(Opcodes.ICONST_0));
-                        il.add(new InsnNode(Opcodes.IRETURN));
-                        il.add(ln)
-                        mn.instructions.insert(node, il);
+                for (var iterator = mn.instructions.iterator(); iterator.hasNext();) {
+                    var node = iterator.next();
+                    if (node.getOpcode() === Opcodes.ARETURN) {
+                        mn.instructions.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "io/github/zekerzhayard/npe_entityrenderermanager/DummyEntityRenderer", "checkNull", "(Lnet/minecraft/client/renderer/entity/EntityRenderer;)Lnet/minecraft/client/renderer/entity/EntityRenderer;", false));
                     }
                 }
                 return mn;

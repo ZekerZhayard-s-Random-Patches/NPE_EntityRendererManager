@@ -4,7 +4,7 @@ plugins {
 
 
 group = 'io.github.zekerzhayard'
-version = '1.3-SNAPSHOT'
+version = '1.4-SNAPSHOT'
 
 java {
     archivesBaseName = 'NPE_EntityRendererManager'
@@ -48,8 +48,6 @@ minecraft {
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
-            property 'forge.logging.classtransformer.level', 'trace'
-            property 'forge.logging.marker.classdump', 'ACCEPT'
 
             mods {
                 npe_entityrenderermanager {
@@ -88,6 +86,12 @@ minecraft {
                     source sourceSets.main
                 }
             }
+        }
+
+        all {
+            property 'java.io.tmpdir', "${projectDir}/run/tmp"
+            property 'forge.logging.classtransformer.level', 'trace'
+            property 'forge.logging.marker.classdump', 'ACCEPT'
         }
     }
 }
